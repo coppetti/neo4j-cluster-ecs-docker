@@ -3,8 +3,16 @@
 # database mode
 export NEO4J_dbms_mode=HA
 
-# server id
-export NEO4J_ha_serverId=1
+# check id has been generated
+if [ -f /data/server_id ]; then
+    # server id
+    export NEO4J_ha_serverId=$(cat /data/server_id)
+else
+    # generate server id
+    export NEO4J_ha_serverId=$RANDOM
+    # store it
+    echo ${NEO4J_ha_serverId} > /data/server_id
+fi
 
 # host coordination
 export NEO4J_ha_host_coordination=":5001"
