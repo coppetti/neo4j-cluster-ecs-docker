@@ -6,4 +6,4 @@ EXPOSE 5001 6001
 
 ENTRYPOINT ["/start.sh"]
 
-CMD ["neo4j"]
+CMD ["cluster"]

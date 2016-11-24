@@ -1,27 +1,35 @@
 #!/bin/bash -eu
 
-# database mode
-export NEO4J_dbms_mode=HA
+# check cluster is enabled
+if [ "$1" == "cluster" ]; then
 
-# check id has been generated
-if [ -f /data/server_id ]; then
-    # server id
-    export NEO4J_ha_serverId=$(cat /data/server_id)
-else
-    # generate server id
-    export NEO4J_ha_serverId=$RANDOM
-    # store it
+    # database mode
+    export NEO4J_dbms_mode=HA
+
+    # server id, generate a new one if not set
+    export NEO4J_ha_serverId=${NEO4J_ha_serverId:-$(cat /data/server_id)}
+
+    # store server id
     echo ${NEO4J_ha_serverId} > /data/server_id
+
+    # host coordination port
+    export NEO4J_ha_host_coordination_port=${NEO4J_ha_host_coordination_port:-5001}
+
+    # host coordination
+    export NEO4J_ha_host_coordination=":${NEO4J_ha_host_coordination_port}"
+
+    # master data port
+    export NEO4J_ha_host_data_port=${NEO4J_ha_host_data_port:-6001}
+
+    # listen for transactions from the master node
+    export NEO4J_ha_host_data=":${NEO4J_ha_host_data_port}"
+
+    # initial hosts
+    export NEO4J_ha_initialHosts="127.0.0.1:${NEO4J_ha_host_coordination_port}"
+
+    # execute entrypoint script
+    /docker-entrypoint.sh "neo4j"
+else
+    # execute entrypoint script
+    /docker-entrypoint.sh $1
 fi
-
-# host coordination
-export NEO4J_ha_host_coordination=":5001"
-
-# listen for transactions from the master node
-export NEO4J_ha_host_data=":6001"
-
-# initial hosts
-export NEO4J_ha_initialHosts="127.0.0.1:5001"
-
-# execute entrypoint script
-/docker-entrypoint.sh $1
