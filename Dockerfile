@@ -1,8 +1,13 @@
-FROM neo4j:3.0-enterprise
+FROM neo4j:3.2-enterprise
+
+RUN apk add --no-cache --quiet curl && \
+    mkdir -p /tools && \
+    $(cd /tools && curl --fail --silent --show-error --location --remote-name http://central.maven.org/maven2/com/steelbridgelabs/oss/neo4j-cluster-ecs-tools/0.0.1/neo4j-cluster-ecs-tools-0.0.1-jar-with-dependencies.jar) && \
+    apk del curl
 
 COPY start.sh /start.sh
 
-EXPOSE 5001 6001
+EXPOSE 5000 6000 7000 7473 7474 7687
 
 ENTRYPOINT ["/start.sh"]
 

@@ -3,29 +3,17 @@
 # check cluster is enabled
 if [ "$1" == "cluster" ]; then
 
-    # database mode
-    export NEO4J_dbms_mode=HA
+    # use random number as server_id
+    echo -n $RANDOM > /data/server_id
 
-    # server id, generate a new one if not set
-    export NEO4J_ha_serverId=${NEO4J_ha_serverId:-$(cat /data/server_id)}
+    # server id
+    export NEO4J_ha_server__id=${NEO4J_ha_server__id:-$(cat /data/server_id)}
 
     # store server id
-    echo ${NEO4J_ha_serverId} > /data/server_id
+    echo ${NEO4J_ha_server__id} > /data/server_id
 
-    # host coordination port
-    export NEO4J_ha_host_coordination_port=${NEO4J_ha_host_coordination_port:-5001}
-
-    # host coordination
-    export NEO4J_ha_host_coordination=":${NEO4J_ha_host_coordination_port}"
-
-    # master data port
-    export NEO4J_ha_host_data_port=${NEO4J_ha_host_data_port:-6001}
-
-    # listen for transactions from the master node
-    export NEO4J_ha_host_data=":${NEO4J_ha_host_data_port}"
-
-    # initial hosts
-    export NEO4J_ha_initialHosts="127.0.0.1:${NEO4J_ha_host_coordination_port}"
+    # initial hosts in cluster
+    export NEO4J_causal__clustering_initial__discovery__members=$(java -jar /tools/neo4j-cluster-ecs-tools-0.0.1-jar-with-dependencies.jar)
 
     # execute entrypoint script
     /docker-entrypoint.sh "neo4j"
