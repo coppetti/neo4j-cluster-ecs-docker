@@ -13,7 +13,7 @@ if [ "$1" == "cluster" ]; then
     echo ${NEO4J_ha_server__id} > /data/server_id
 
     # initial hosts in cluster
-    export NEO4J_causal__clustering_initial__discovery__members=$(java -jar /tools/neo4j-cluster-ecs-tools-jar-with-dependencies.jar)
+    export NEO4J_causal__clustering_initial__discovery__members=$(java -jar /tools/neo4j-cluster-ecs-tools-jar-with-dependencies.jar ${ECS_CLUSTER_NAME})
 
     # execute entrypoint script
     /docker-entrypoint.sh "neo4j"
