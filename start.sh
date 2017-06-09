@@ -12,6 +12,9 @@ if [ "$1" == "cluster" ]; then
     # store server id
     echo ${NEO4J_ha_server__id} > /data/server_id
 
+    # advertise all connectors on hostname
+    export NEO4J_dbms_connectors_default__advertised__address=$(hostname -f)
+
     # initial hosts in cluster
     export NEO4J_causal__clustering_initial__discovery__members=$(java -jar /tools/neo4j-cluster-ecs-tools-jar-with-dependencies.jar ${ECS_CLUSTER_NAME})
 
